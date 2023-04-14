@@ -1,32 +1,26 @@
 import socket
-from cryptography.fernet import Fernet
+import threading
+import hashlib
 
 HOST = '127.0.0.1'
 PORT = 65432
-KEY = Fernet.generate_key()
+BUFF_SIZE = 1024
 
-def encrypt_message(message, key):
-    f = Fernet(key)
-    encrypted_message = f.encrypt(message.encode())
-    return encrypted_message
-
-def decrypt_message(encrypted_message, key):
-    f = Fernet(key)
-    decrypted_message = f.decrypt(encrypted_message)
-    return decrypted_message.decode()
+def handle_client(conn, addr):
+    print(f"New connection from {addr}")
+    while True:
+        data = conn.recv(BUFF_SIZE)
+        if not data:
+            break
+        hashed_message = hashlib.sha256(data).hexdigest()
+        print(f"Received message from {addr}: {hashed_message}")
+        conn.send(hashed_message.encode())
+    print(f"Connection from {addr} closed")
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
     s.listen()
-    conn, addr = s.accept()
-    print('Connected by', addr)
-    with conn:
-        while True:
-            data = conn.recv(1024)
-            if not data:
-                break
-            decrypted_data = decrypt_message(data, KEY)
-            print(decrypted_data)
-            message = input('Enter your message: ')
-            encrypted_message = encrypt_message(message, KEY)
-            conn.sendall(encrypted_message)
+    print(f"Server started on {HOST}:{PORT}")
+    while True:
+        conn, addr = s.accept()
+        threading.Thread(target=handle_client, args=(conn, addr)).start()
