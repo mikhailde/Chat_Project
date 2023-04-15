@@ -36,5 +36,5 @@ def logout_user():
 
 def send_message():
     while True:
-        message = input("Enter your message: ")
+        message = input("Enter your message: ").encode()
        
