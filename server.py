@@ -1,80 +1,37 @@
+from threading import Thread
+import database as db
+
 import socket
-import threading
-import hashlib
-import sqlite3
+import ssl
 
-HOST = '127.0.0.1'
-PORT = 65432
-BUFF_SIZE = 1024
 
-conn = sqlite3.connect('users.sql')
-c = conn.cursor()
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+    sock.bind(('localhost', 25565))
+    sock.listen(10)
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    context.load_cert_chain(certfile='TLS/server.crt', keyfile='TLS/server.key')
+    ssl_sock = context.wrap_socket(sock, server_side=True)
+    clients = set()
 
-def create_table():
-    c.execute('''CREATE TABLE IF NOT EXISTS users 
-                (username TEXT, password TEXT, status TEXT)''')
-    conn.commit()
 
-def register_user(username, password):
-    c.execute("SELECT * FROM users WHERE username=?", (username,))
-    user = c.fetchone()
-    if user:
-        return False
-    else:
-        c.execute("INSERT INTO users (username, password, status) VALUES (?, ?, ?)",
-                  (username, password, 'inactive'))
-        conn.commit()
-        return True
+    def client_conn(conn):
+        with conn:
+            while True:
+                operation, username, password = conn.recv(1024).decode().split(':')
+                if operation == 'login':
 
-def login_user(username, password):
-    c.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
-    user = c.fetchone()
-    if user:
-        c.execute("UPDATE users SET status='active' WHERE username=?", (username,))
-        conn.commit()
-        return True
-    else:
-        print("You don't have an account. Register now.")
-        register_user(username, password)
-        return True
 
-def logout_user(username):
-    c.execute("UPDATE users SET status='inactive' WHERE username=?", (username,))
-    conn.commit()
 
-def get_active_users():
-    c.execute("SELECT username FROM users WHERE status='active'")
-    users = c.fetchall()
-    return [user[0] for user in users]
-
-def handle_client(conn, addr):
-    create_table()
-    print(f"New connection from {addr}")
     while True:
-        data = conn.recv(BUFF_SIZE)
-        if not data:
-            break
-        username, message = data.decode().split(":")
-        hashed_message = hashlib.sha256(message.encode()).hexdigest()
-        print(f"Received message from {username}: {hashed_message}")
-        active_users = get_active_users()
-        for client in clients:
-            if client != conn and client in active_users:
-                client.send(f"{username}: {message}".encode())
-        conn.send(hashed_message.encode())
-    username = conn.username
-    logout_user(username)
-    print(f"Connection from {addr} closed")
+        conn, addr = ssl_sock.accept()
+        clients.append(conn)
+        client_thread = Thread(target=client_conn, args=(conn))
 
-def start_server():
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind((HOST, PORT))
-        s.listen()
-        print(f"Server started on {HOST}:{PORT}")
-        while True:
-            conn, addr = s.accept()
-            threading.Thread(target=handle_client, args=(conn, addr)).start()
 
-clients = []
 
-start_server()
+        data = conn.recv(1024)
+        print(data)
+
+        conn.send(b'Hello')
+
+        conn.close()
