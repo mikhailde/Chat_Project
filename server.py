@@ -18,17 +18,16 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         print('Connected')
         with conn:
             while True:
-                operation, username, password = conn.recv(1024).decode().split(':')
+                data = conn.recv(1024).decode().split(':')
+                if data: operation, username, password = data
+                else: break
                 print(operation)
                 if operation == 'register':
                     if db.register(username, password): conn.send('Success'.encode())
                     else: conn.send('Exists'.encode())
                 if operation == 'login':
-                    print(db.login(username, password))
-                    # if db.login(username, password):
-                    #     print('Успех')
-                    #     conn.send('Success'.encode())
-                    # else: conn.send('Error'.encode())
+                    if db.login(username, password): conn.send('Success'.encode())
+                    else: conn.send('Error'.encode())
                 # if operation == 'message':
                 
 
