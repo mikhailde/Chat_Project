@@ -15,23 +15,26 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
 
 
     def client_conn(conn):
+        print('Connected')
         with conn:
             while True:
                 operation, username, password = conn.recv(1024).decode().split(':')
+                print(operation)
+                if operation == 'register':
+                    if db.register(username, password): conn.send('Success'.encode())
+                    else: conn.send('Exists'.encode())
                 if operation == 'login':
+                    print(db.login(username, password))
+                    # if db.login(username, password):
+                    #     print('Успех')
+                    #     conn.send('Success'.encode())
+                    # else: conn.send('Error'.encode())
+                # if operation == 'message':
+                
 
 
 
     while True:
         conn, addr = ssl_sock.accept()
-        clients.append(conn)
-        client_thread = Thread(target=client_conn, args=(conn))
-
-
-
-        data = conn.recv(1024)
-        print(data)
-
-        conn.send(b'Hello')
-
-        conn.close()
+        clients.add(conn)
+        client_thread = Thread(target=client_conn, args=[conn], daemon=True).start()

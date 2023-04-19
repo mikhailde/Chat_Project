@@ -24,9 +24,12 @@ class Login(QWidget, login.Ui_ChatBox):
         
 
     def login(self):
+        print(':'.join(['login', self.lineEdit.text(), self.lineEdit_2.text()]).encode())
         serv.send(':'.join(['login', self.lineEdit.text(), self.lineEdit_2.text()]).encode())
-        self.close()
-        main_window.show()
+        status = serv.recv(1024).decode()
+        print(status)
+        if status == 'Error': self.label_3.setText('Неверные данные')
+        else: self.close()
 
     def eventFilter(self, a0, a1) -> bool:
         
@@ -49,8 +52,15 @@ class Registration(QWidget, registration.Ui_ChatBox):
         self.frame.setStyleSheet(stylesheet)
 
     def registration(self):
-        self.close()
-        main_window.show()
+        if self.lineEdit_2.text() != self.lineEdit_3.text(): self.label_3.setText('Пароли не совпадают')
+        else:
+            print(':'.join(['register', self.lineEdit.text(), self.lineEdit_2.text()]).encode())
+            serv.send(':'.join(['register', self.lineEdit.text(), self.lineEdit_2.text()]).encode())
+            status = serv.recv(1024).decode()
+            print(status)
+            if status == 'Error': self.label_3.setText('Ошибка')
+            if status == 'Exists': self.label_3.setText('Уже зарегистрирован')
+            else: self.close()
 
     def eventFilter(self, a0, a1) -> bool:
         
