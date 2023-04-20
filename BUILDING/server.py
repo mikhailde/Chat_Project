@@ -52,13 +52,13 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
                     for client in clients:
                         client[0].sendall(':'.join(['online', str(len(clients)), ':'.join([client[1] for client in clients])]).encode())
                 if operation == 'logout':
+                    if data == ['']:
+                        print(f'Disconnected {addr}')
+                        break
                     conn.sendall(b'logout')
                     clients.remove((conn,username))
                     for client in clients:
                             client[0].sendall(':'.join(['online', str(len(clients)), ':'.join([client[1] for client in clients])]).encode())
-                    if data == ['']:
-                        print(f'Disconnected {addr}')
-                        break
                 if operation == 'message':
                     for client in clients:
                         if client[0] != conn:
