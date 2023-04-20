@@ -1,7 +1,7 @@
 <h1 align="center">Чат на сокетах</h1>
 
 <div align='center'>
-<img align="right" alt="Coding" width="500" src="https://i.imgur.com/uTJjC0B.jpg">
+<img align="center" alt="Coding" width="500" src="https://i.imgur.com/uTJjC0B.jpg">
 </div>
 
 <h3 align="center">Введение</h3>
