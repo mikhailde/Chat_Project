@@ -3,20 +3,30 @@ import signal
 import socket
 import ssl
 import sys
+import argparse
 
 from threading import Thread
 
 import database as db
 
 
+def get_ip():
+	with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+		s.connect(('8.8.8.8',80))
+		return s.getsockname()[0]
+
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+    parser = argparse.ArgumentParser(description='A tutorial of argparse!')
+    parser.add_argument('--host', default=get_ip(), type=str, help="Host IP address")
+    parser.add_argument('--port', default=25565, type=int, help="Host port")
+    args = parser.parse_args()
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    sock.bind(('185.107.237.242', 25565))
+    sock.bind((args.host, args.port))
     sock.listen(10)
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     context.load_cert_chain(certfile='TLS/server.crt', keyfile='TLS/server.key')
     ssl_sock = context.wrap_socket(sock, server_side=True)
-    print('Server started')
+    print(f'Server started at {args.host}, {args.port}')
     clients = set()
 
 
