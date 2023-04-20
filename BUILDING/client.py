@@ -2,9 +2,11 @@
 import socket
 import ssl
 import os
+import argparse
+from threading import Thread
 import login, registration, ChatBox
 
-from threading import Thread
+
 from PyQt6.QtWidgets import QApplication, QWidget, QMainWindow
 from PyQt6 import QtCore
 
@@ -17,8 +19,12 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
 context.load_verify_locations(cafile=os.path.join(basedir, 'server.crt'))
 serv = context.wrap_socket(sock, server_hostname='chatbox.ru')
+parser = argparse.ArgumentParser(description='A tutorial of argparse!')
+parser.add_argument('--host', default='185.107.237.242', type=str, help="Host IP address")
+parser.add_argument('--port', default=25565, type=int, help="Host port")
+args = parser.parse_args()
 try:
-    serv.connect(('185.107.237.242', 25565))
+    serv.connect((args.host, args.port))
 except Exception as e:
     print('Сервер недоступен')
 
