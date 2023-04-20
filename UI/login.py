@@ -17,7 +17,7 @@ class Ui_ChatBox(object):
         font.setFamily("Arial")
         ChatBox.setFont(font)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("logo.ico"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        icon.addPixmap(QtGui.QPixmap("UI/logo.ico"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         ChatBox.setWindowIcon(icon)
         ChatBox.setAutoFillBackground(False)
         ChatBox.setStyleSheet("")
