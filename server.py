@@ -22,7 +22,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
     def client_conn(conn, addr):
         """Функция подключения клиента"""
         global clients
-        print('Connected')
+        print(f'Connected {addr}')
         with conn:
             while True:
                 data = conn.recv(1024).decode().split(':')

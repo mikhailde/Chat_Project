@@ -129,7 +129,7 @@ class MainWindow(QMainWindow, ChatBox.Ui_MainWindow):
         """Метод приема сообщений"""
         while True:
             data = serv.recv(1024).decode().split(':')
-            operation, *message = data
+            if data != ['']: operation, *message = data
             if operation == 'online':
                 count, *users = message
                 self.users = users
