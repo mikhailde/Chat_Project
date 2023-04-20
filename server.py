@@ -47,7 +47,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
                     username = message[0]
                     if db.login(*message):
                         conn.sendall(b'Success')
-                    else: conn.sendall('Error'.encode())
+                    else:
+                        conn.sendall('Error'.encode())
                 if operation == 'online':
                     clients.add((conn, *message))
                     for client in clients:
