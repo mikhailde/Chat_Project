@@ -34,5 +34,7 @@ def register(username, password):
         
 def login(username, password):
     with Session(autoflush=False, bind=engine) as db:
-        salt = db.query(User).filter(User.username==username).first().salt
-        return check(db.query(User).filter(User.username==username).first().password, password + salt)
+        user = db.query(User).filter(User.username==username).first()
+        if user: salt = user.salt
+        else: return False
+        return check(user.password, password + salt)
