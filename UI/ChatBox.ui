@@ -210,7 +210,6 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>ChatBox</string>
     </property>
-    <addaction name="action"/>
     <addaction name="action_2"/>
     <addaction name="action_3"/>
    </widget>

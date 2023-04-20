@@ -38,10 +38,10 @@
     </rect>
    </property>
    <property name="autoFillBackground">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="styleSheet">
-    <string>0</string>
+    <string notr="true">border-image: url('backlogo.jpg');</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::StyledPanel</enum>

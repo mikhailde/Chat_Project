@@ -91,7 +91,6 @@ class Ui_MainWindow(object):
         self.action_2.setObjectName("action_2")
         self.action_3 = QtGui.QAction(parent=MainWindow)
         self.action_3.setObjectName("action_3")
-        self.menuChatBox.addAction(self.action)
         self.menuChatBox.addAction(self.action_2)
         self.menuChatBox.addAction(self.action_3)
         self.menubar.addAction(self.menuChatBox.menuAction())

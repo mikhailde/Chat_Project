@@ -2,6 +2,7 @@
 import signal
 import socket
 import ssl
+import sys
 
 from threading import Thread
 
@@ -10,7 +11,7 @@ import database as db
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    sock.bind(('localhost', 25565))
+    sock.bind(('185.107.237.242', 25565))
     sock.listen(10)
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     context.load_cert_chain(certfile='TLS/server.crt', keyfile='TLS/server.key')
@@ -26,17 +27,11 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         with conn:
             while True:
                 data = conn.recv(1024).decode().split(':')
+                print(data)
                 if data != ['']:
                     operation, *message = data
                 else:
-                    try:
-                        clients.remove((conn,username))
-                        for client in clients:
-                            client[0].sendall(':'.join(['online', str(len(clients)), ':'.join([client[1] for client in clients])]).encode())
-                    except Exception as e:
-                        print(e)
-                    print(f'Disconnected {addr}')
-                    break
+                    operation = 'logout'
                 if operation == 'register':
                     username = message[0]
                     if db.register(*message):
@@ -48,11 +43,19 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
                     if db.login(*message):
                         conn.sendall(b'Success')
                     else:
-                        conn.sendall('Error'.encode())
+                        conn.sendall(b'Error')
                 if operation == 'online':
                     clients.add((conn, *message))
                     for client in clients:
                         client[0].sendall(':'.join(['online', str(len(clients)), ':'.join([client[1] for client in clients])]).encode())
+                if operation == 'logout':
+                    conn.sendall(b'logout')
+                    clients.remove((conn,username))
+                    for client in clients:
+                            client[0].sendall(':'.join(['online', str(len(clients)), ':'.join([client[1] for client in clients])]).encode())
+                    if data == ['']:
+                        print(f'Disconnected {addr}')
+                        break
                 if operation == 'message':
                     for client in clients:
                         if client[0] != conn:
@@ -63,11 +66,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         print('Server stopped')
         clients.clear()
         sock.close()
-        exit()
+        sys.exit()
 
     signal.signal(signal.SIGINT, stop_server)
 
     while True:
         conn, addr = ssl_sock.accept()
-        print(f'Connected {addr}')
         Thread(target=client_conn, args=[conn, addr], daemon=True).start()

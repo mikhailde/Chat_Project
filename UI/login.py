@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'login.ui'
+﻿# Form implementation generated from reading ui file 'login.ui'
 #
 # Created by: PyQt6 UI code generator 6.4.2
 #
@@ -19,12 +19,14 @@ class Ui_ChatBox(object):
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("UI/logo.ico"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         ChatBox.setWindowIcon(icon)
-        ChatBox.setAutoFillBackground(False)
+        ChatBox.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
+        ChatBox.setAutoFillBackground(True)
         ChatBox.setStyleSheet("")
         self.frame = QtWidgets.QFrame(parent=ChatBox)
         self.frame.setEnabled(True)
         self.frame.setGeometry(QtCore.QRect(0, 0, 240, 400))
-        self.frame.setAutoFillBackground(True)
+        self.frame.setAutoFillBackground(False)
+        self.frame.setStyleSheet("border-image: url(UI/backlogo.jpg);")
         self.frame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
         self.frame.setObjectName("frame")
@@ -103,7 +105,6 @@ class Ui_ChatBox(object):
     def retranslateUi(self, ChatBox):
         _translate = QtCore.QCoreApplication.translate
         ChatBox.setWindowTitle(_translate("ChatBox", "ChatBox - Вход"))
-        self.frame.setStyleSheet(_translate("ChatBox", "0"))
         self.label.setText(_translate("ChatBox", "Нет аккаунта?"))
         self.pushButton.setText(_translate("ChatBox", "Войти"))
 
