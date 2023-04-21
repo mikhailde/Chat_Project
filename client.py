@@ -40,14 +40,19 @@ class Login(QWidget, login.Ui_ChatBox):
 
     def login(self):
         """Метод входа"""
-        serv.sendall(':'.join(['login', self.lineEdit.text(), self.lineEdit_2.text()]).encode())
-        status = serv.recv(1024)
-        if status.decode() == 'Error':
-            self.label_3.setText('Неверные данные')
+        if not self.lineEdit.text() and not self.lineEdit_2.text():
+            self.label_3.setText('Заполните все поля')
         else:
-            serv.sendall(':'.join(['online', self.lineEdit.text()]).encode())
-            self.close()
-            main_window.show()
+            serv.sendall(':'.join(['login', self.lineEdit.text(), self.lineEdit_2.text()]).encode())
+            status = serv.recv(1024)
+            if status.decode() == 'Error':
+                self.label_3.setText('Неверные данные')
+            if status.decode() == 'Used':
+                self.label_3.setText('Аккаунт уже используется')
+            else:
+                serv.sendall(':'.join(['online', self.lineEdit.text()]).encode())
+                self.close()
+                main_window.show()
 
     def eventFilter(self, a0, a1) -> bool:
         """Захват нажатия на кнопку регистрации"""
@@ -76,7 +81,9 @@ class Registration(QWidget, registration.Ui_ChatBox):
 
     def registration(self):
         """Метод регистрации"""
-        if self.lineEdit_2.text() != self.lineEdit_3.text():
+        if not self.lineEdit.text() and not self.lineEdit_2.text() and not self.lineEdit_3.text():
+            self.label_3.setText('Заполните все поля')
+        elif self.lineEdit_2.text() != self.lineEdit_3.text():
             self.label_3.setText('Пароли не совпадают')
         else:
             serv.sendall(':'.join(['register', self.lineEdit.text(), self.lineEdit_2.text()]).encode())
@@ -85,7 +92,7 @@ class Registration(QWidget, registration.Ui_ChatBox):
             if status == 'Error':
                 self.label_3.setText('Ошибка')
             if status == 'Exists':
-                self.label_3.setText('Уже зарегистрирован')
+                self.label_3.setText('Аккаунт уже зарегистрирован')
             else:
                 serv.sendall(':'.join(['online', self.lineEdit.text()]).encode())
                 self.close()
