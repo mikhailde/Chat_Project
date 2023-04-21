@@ -53,7 +53,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
                         conn.sendall(b'Exists')
                 if operation == 'login':
                     username = message[0]
-                    if db.login(*message):
+                    if username in [client[1] for client in clients]:
+                        conn.sendall(b'Used')
+                    elif db.login(*message):
                         conn.sendall(b'Success')
                     else:
                         conn.sendall(b'Error')
