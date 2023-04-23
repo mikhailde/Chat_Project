@@ -1,6 +1,4 @@
-<<<<<<< HEAD
- 
-=======
+
 <h1 align="center">Чат на сокетах</h1>
 
 <div align='center'>
