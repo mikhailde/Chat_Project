@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>ChatBox</title>
-</head>
 <body>
-  <h1 align="center">Чат на сокетах</h1>
+  <h1 align="center">ChatBox</h1>
   <div align='center'>
     <img align="center" alt="Coding" width="500" src="https://i.imgur.com/uTJjC0B.jpg">
   </div>
@@ -54,9 +51,9 @@
   </ol>
   <pre><code>python client.py</code></pre>
 
-  <h2>
+  <h2>Вклад в проект
 
-Вклад в проект</h2>
+</h2>
   <p>Если вы хотите внести свой вклад в проект, вы можете выполнить следующие действия:</p>
   <ol>
     <li>Форкните репозиторий.</li>
