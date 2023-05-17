@@ -1,8 +1,5 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Проект "ChatBox"</title>
-</head>
 <body>
   <h1>Проект "ChatBox"</h1>
   <div align='center'>
